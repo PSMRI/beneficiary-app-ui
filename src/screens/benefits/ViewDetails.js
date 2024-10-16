@@ -9,7 +9,6 @@ import * as benefitServis from '../../service/benefits';
 import WebViewFormExample from '../../components/common/webview/Form';
 import {getTokenData} from '../../service/ayncStorage';
 import {getUser} from '../../service/auth';
-import {decryptData} from '../../utils/JsHelper/helper';
 
 const ViewDetails = ({route}) => {
   // Retrieve the id passed from the HomeScreen
@@ -48,7 +47,7 @@ const ViewDetails = ({route}) => {
     setLoading(false);
     // setVisibleDialog(true);
   };
-  console.log(webFromProp);
+
   const closeCOnfirmDialog = () => {
     setVisibleDialog(false);
   };
@@ -77,8 +76,14 @@ const ViewDetails = ({route}) => {
     {id: 3, name: 'Caste Certificate'},
     {id: 4, name: 'Domicile Certificate'},
   ];
+  const submitConfirm = async id => {
+    console.log(id, 'sagar');
+    setWebFromProp();
+  };
   if (webFromProp?.url) {
-    return <WebViewFormExample {...webFromProp} />;
+    return (
+      <WebViewFormExample {...webFromProp} setPageContent={submitConfirm} />
+    );
   }
   return (
     <Layout
