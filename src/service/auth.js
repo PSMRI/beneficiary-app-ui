@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {removeToken} from './ayncStorage';
-
-const API_BASE_URL = 'https://dev-uba-bap.tekdinext.com/api';
+import {API_BASE_URL} from './env.dev';
 
 export const registerUser = async userData => {
   try {

@@ -50,7 +50,9 @@ const BenefitCard = ({item, navigation}) => {
         <Text style={styles.description}>{item?.description}</Text>
         <TouchableOpacity
           style={styles.viewDetailsRow}
-          onPress={() => navigation.navigate('BenefitDetails')}>
+          onPress={() =>
+            navigation.navigate('BenefitDetails', {id: item?.item_id})
+          }>
           <Text style={styles.detailText}>View Details</Text>
           <Ionicons name="arrow-forward-outline" size={18} color="#0037B9" />
         </TouchableOpacity>

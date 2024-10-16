@@ -1,23 +1,70 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {FlatList, View, Text, StyleSheet, ScrollView} from 'react-native';
-import {details} from '../../constatnt/Constant';
 import CustomButton from '../../components/common/button/Button';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import Layout from '../../components/common/layout/Layout';
 import {useNavigation} from '@react-navigation/native';
 import {Icon} from 'react-native-paper';
-const ViewDetails = () => {
-  const [visibleDialog, setVisibleDialog] = React.useState(false);
+import * as benefitServis from '../../service/benefits';
+import WebViewFormExample from '../../components/common/webview/Form';
+import {getTokenData} from '../../service/ayncStorage';
+import {getUser} from '../../service/auth';
+import {decryptData} from '../../utils/JsHelper/helper';
+
+const ViewDetails = ({route}) => {
+  // Retrieve the id passed from the HomeScreen
+  const {id} = route.params;
+  const [visibleDialog, setVisibleDialog] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [webFromProp, setWebFromProp] = useState({});
+
+  const [item, setItem] = useState();
   const navigation = useNavigation();
+  const [context, setContext] = useState({});
+
   const handleBack = () => {
     navigation.navigate('BenefitsListing');
   };
-  const openCOnfirmDialog = () => {
-    setVisibleDialog(true);
+  const openCOnfirmDialog = async () => {
+    setLoading(true);
+    console.log('sagar', ' user');
+
+    const result = await benefitServis.applyApplication({id, context});
+    const {sub} = await getTokenData(); // Assuming sub is the user identifier
+    const user = await getUser(sub);
+    console.log('sagar', user);
+    setWebFromProp({
+      url: result?.data?.responses?.[0]?.message?.order?.items?.[0]?.xinput
+        ?.form?.url,
+      formData:
+        {
+          ...(user?.user || {}),
+          ...(user?.userInfo || {}),
+          class: user?.userInfo?.current_class || '',
+          marks_previous_class: user?.userInfo?.previous_year_marks || '',
+          phone_number: user?.userInfo?.phone || '',
+        } || {},
+    });
+    setLoading(false);
+    // setVisibleDialog(true);
   };
+  console.log(webFromProp);
   const closeCOnfirmDialog = () => {
     setVisibleDialog(false);
   };
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const result = await benefitServis.getOne({id});
+        setContext(result?.data?.responses?.[0]?.context);
+        setItem(result?.data?.responses?.[0]?.message?.order?.items?.[0] || {});
+        setLoading(false);
+      } catch (e) {
+        console.log('Error:', e.message);
+      }
+    };
+    init();
+  }, []);
   const renderItem = ({item: detailItem}) => (
     <View style={styles.listItem}>
       <Text style={styles.bullet}>•</Text>
@@ -30,78 +77,82 @@ const ViewDetails = () => {
     {id: 3, name: 'Caste Certificate'},
     {id: 4, name: 'Domicile Certificate'},
   ];
+  if (webFromProp?.url) {
+    return <WebViewFormExample {...webFromProp} />;
+  }
   return (
     <Layout
+      loading={loading}
       _heading={{
         heading: 'Pre-Matric Scholarship-ST',
         subHeading: 'Application for SC Scholarship1',
         handleBack,
       }}>
       <ScrollView contentContainerStyle={styles.container}>
-        {details?.map(item => {
-          return (
-            <View key={item.id} style={styles.sidePadding}>
-              <Text style={styles.title}>{item?.title}</Text>
-              <View style={styles.benefitAmount}>
-                <Icon source={'currency-inr'} size={16} color="#484848" />
-                <Text style={{fontSize: 14, marginLeft: 12}}>
-                  {item?.amount}
-                </Text>
-              </View>
-              <Text style={styles.descriptionHeading}>Details</Text>
-              <Text style={styles.description}>Details{item?.desc}</Text>
-              <Text numberOfLines={8} style={styles.description}>
-                {item.desc1}
+        <View style={styles.sidePadding}>
+          <Text style={styles.title}>{item?.descriptor?.name}</Text>
+          <View style={styles.benefitAmount}>
+            <Icon source={'currency-inr'} size={16} color="#484848" />
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 14, marginRight: 4}}>
+                {item?.price?.value}
               </Text>
-              <Text style={styles.descriptionHeading}>
-                Objectives of the Pre-matric Scholarship-ST:
+              <Text style={{fontSize: 14, marginRight: 4}}>
+                {item?.price?.currency}
               </Text>
-              <FlatList
-                data={item.objective}
-                renderItem={({item: objectiveItem}) =>
-                  renderItem({item: objectiveItem})
-                }
-                keyExtractor={objectiveItem => objectiveItem}
-                style={styles}
-                scrollEnabled={false}
-              />
-
-              <Text style={styles.descriptionHeading}>Key Points:</Text>
-              <FlatList
-                data={item.keyPoints}
-                renderItem={({item: keyPointsItem}) =>
-                  renderItem({item: keyPointsItem})
-                }
-                keyExtractor={keyPointsItem => keyPointsItem}
-                scrollEnabled={false}
-              />
-              <Text style={styles.descriptionHeading}>
-                Mandatory Documents:
-              </Text>
-              <FlatList
-                data={item.document}
-                renderItem={({item: documentItem}) =>
-                  renderItem({item: documentItem})
-                }
-                keyExtractor={documentItem => documentItem}
-                scrollEnabled={false}
-              />
-              <CustomButton
-                label="Proceed To Apply"
-                marginTop={18}
-                height={40}
-                width={'95%'}
-                handleClick={() => openCOnfirmDialog()}
-              />
-              <ConfirmationDialog
-                dialogVisible={visibleDialog}
-                closeDialog={closeCOnfirmDialog}
-                submitDialog={true}
-                documents={documents}
-              />
             </View>
-          );
-        })}
+          </View>
+          <View style={{flexDirection: 'column'}}>
+            <Text style={styles.descriptionHeading}>Details</Text>
+            <Text numberOfLines={8} style={styles.description}>
+              {item?.descriptor?.long_desc}
+            </Text>
+          </View>
+          <Text style={styles.descriptionHeading}>
+            Objectives of the Pre-matric Scholarship-ST:
+          </Text>
+          <FlatList
+            data={item?.objective}
+            renderItem={({item: objectiveItem}) =>
+              renderItem({item: objectiveItem})
+            }
+            keyExtractor={objectiveItem => objectiveItem}
+            style={styles}
+            scrollEnabled={false}
+          />
+
+          <Text style={styles.descriptionHeading}>Key Points:</Text>
+          <FlatList
+            data={item?.keyPoints}
+            renderItem={({item: keyPointsItem}) =>
+              renderItem({item: keyPointsItem})
+            }
+            keyExtractor={keyPointsItem => keyPointsItem}
+            scrollEnabled={false}
+          />
+          <Text style={styles.descriptionHeading}>Mandatory Documents:</Text>
+          <FlatList
+            data={item?.document}
+            renderItem={({item: documentItem}) =>
+              renderItem({item: documentItem})
+            }
+            keyExtractor={documentItem => documentItem}
+            scrollEnabled={false}
+          />
+          <CustomButton
+            label="Proceed To Apply"
+            marginTop={18}
+            height={40}
+            width={'95%'}
+            handleClick={async () => openCOnfirmDialog()}
+          />
+          <ConfirmationDialog
+            dialogVisible={visibleDialog}
+            closeDialog={closeCOnfirmDialog}
+            submitDialog={true}
+            documents={documents}
+          />
+        </View>
       </ScrollView>
     </Layout>
   );

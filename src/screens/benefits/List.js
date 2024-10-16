@@ -1,18 +1,31 @@
 import {StyleSheet, FlatList} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import SearchHeader from '../../components/common/layout/SearchHeader';
 import Layout from '../../components/common/layout/Layout';
-import {data} from '../../components/servises/benefits';
+import * as benefitServis from '../../service/benefits';
 
 import BenefitCard from '../../components/common/BenefitCard';
-import CustomButton from '../../components/common/button/Button';
+// import CustomButton from '../../components/common/button/Button';
 const List = () => {
   const navigation = useNavigation();
-  const [hasMore] = React.useState(true);
-  const benefits = data.ubi_network_cache; // data from API
+  const [loading, setLoading] = useState(true);
+  // const [hasMore] = useState(true);
+  // const benefits = data.ubi_network_cache; // data from API
+  const [benefits, setBenefits] = useState([]);
+
+  useEffect(() => {
+    const init = async () => {
+      const result = await benefitServis.getAll();
+      setBenefits(result?.data?.ubi_network_cache || []);
+      setLoading(false);
+    };
+    init();
+  }, []);
+
   return (
     <Layout
+      loading={loading}
       _heading={{
         heading: 'Browse Benefits',
       }}
@@ -27,17 +40,17 @@ const List = () => {
         contentContainerStyle={styles.listContainer}
         scrollEnabled={false}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          hasMore && (
-            <CustomButton
-              label="Load More"
-              marginTop={18}
-              height={40}
-              width={'100%'}
-              marginBottom={18}
-            />
-          )
-        }
+        // ListFooterComponent={
+        //   hasMore && (
+        //     <CustomButton
+        //       label="Load More"
+        //       marginTop={18}
+        //       height={40}
+        //       width={'100%'}
+        //       marginBottom={18}
+        //     />
+        //   )
+        // }
       />
     </Layout>
   );

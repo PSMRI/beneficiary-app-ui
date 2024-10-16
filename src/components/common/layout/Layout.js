@@ -3,8 +3,21 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types'; // Import PropTypes
 import Navbar from './Navbar';
 import HeadingText from './HeadingText';
+import {ActivityIndicator} from 'react-native-paper';
 
-export default function Layout({isScrollable = true, children, ...props}) {
+export default function Layout({
+  isScrollable = true,
+  loading,
+  children,
+  ...props
+}) {
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.center]}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
   if (isScrollable) {
     return (
       <App {...props}>
@@ -25,6 +38,13 @@ Layout.propTypes = {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   view: {
     backgroundColor: '#FFFFFF',
   },
