@@ -1,7 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {ActivityIndicator} from 'react-native-paper';
 import authRoutes from './routes/authRoutes';
 const Tab = createBottomTabNavigator();
@@ -44,7 +44,11 @@ export default function BottomNavigation() {
   };
 
   if (!routes?.length) {
-    return <ActivityIndicator />;
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
   return (
     <Tab.Navigator

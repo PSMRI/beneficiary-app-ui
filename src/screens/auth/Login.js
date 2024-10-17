@@ -1,6 +1,5 @@
-import React, {useContext, useState} from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes for validation
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import React, {useContext, useState, useRef} from 'react';
+import {View, Text, StyleSheet, Pressable, Keyboard} from 'react-native';
 import HeadingText from '../../components/common/layout/HeadingText';
 import CustomButton from '../../components/common/button/Button';
 import {useNavigation} from '@react-navigation/native';
@@ -13,7 +12,7 @@ import {getTokenData, saveToken} from '../../service/ayncStorage';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import {AuthContext} from '../../utils/context/checkToken';
 
-const Login = ({onLoginSuccess}) => {
+const Login = () => {
   const navigation = useNavigation();
   const handleBack = () => {
     navigation.navigate('Splash');
@@ -24,8 +23,11 @@ const Login = ({onLoginSuccess}) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
-  const {userData, documents, updateUserData} = useContext(AuthContext);
+  const {checkToken, documents, updateUserData} = useContext(AuthContext);
+  const passwordRef = useRef(null);
+
   const handleLogin = async () => {
+    Keyboard.dismiss(); // Dismiss the keyboard
     // Clear error after 3 seconds
     const clearError = () => {
       setTimeout(() => {
@@ -68,9 +70,9 @@ const Login = ({onLoginSuccess}) => {
       const {sub} = await getTokenData(); // Assuming sub is the user identifier
       const result = await getUser(sub);
       const data = await getDocumentsList();
-      updateUserData(result, data.data);
+      updateUserData(result.user, data.data);
     } catch (error) {
-      console.error('Error fetching user data or documents:', error);
+      console.log('Error fetching user data or documents:', error.message);
     }
   };
 
@@ -84,11 +86,14 @@ const Login = ({onLoginSuccess}) => {
           value={username}
           onChangeText={setUsername}
           margin={25}
+          onSubmitEditing={() => passwordRef.current.focus()}
         />
         <Password
+          ref={passwordRef}
           label="Password"
           value={password}
           onChangeText={setPassword}
+          onSubmitEditing={handleLogin}
         />
         {error && (
           <View style={styles.errorContainer}>
@@ -117,7 +122,7 @@ const Login = ({onLoginSuccess}) => {
       <ConfirmationDialog
         dialogVisible={dialogVisible}
         closeDialog={setDialogVisible}
-        handleConfirmation={onLoginSuccess}
+        handleConfirmation={checkToken}
         documents={documents}
       />
     </View>
@@ -125,9 +130,7 @@ const Login = ({onLoginSuccess}) => {
 };
 
 // Prop validation
-Login.propTypes = {
-  onLoginSuccess: PropTypes.func.isRequired,
-};
+Login.propTypes = {};
 
 const styles = StyleSheet.create({
   text: {

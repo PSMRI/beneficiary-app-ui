@@ -7,8 +7,11 @@ const Splash = () => {
   // Dynamic list for language selection; expand as needed
   const languageOptions = [{label: 'English', value: '1'}];
   const navigation = useNavigation();
+  const [selectedLanguage, setSelectedLanguage] = React.useState(null);
   const handleLogin = () => {
-    navigation.navigate('Login');
+    if (selectedLanguage) {
+      navigation.navigate('Login');
+    }
   };
 
   return (
@@ -24,8 +27,9 @@ const Splash = () => {
         <Dropdown
           DropdownLabel="Select Language"
           Data={languageOptions}
-          helperText="You can change this later"
+          helperText={'You can change this later'}
           helperData={true}
+          getValue={setSelectedLanguage}
         />
         <Button
           label="Sign In / Sign Up "
@@ -33,6 +37,7 @@ const Splash = () => {
           width="92%"
           handleClick={handleLogin}
           accessibilityLabel="Sign In or Sign Up With DigiLocker"
+          disabled={!selectedLanguage}
         />
         <View style={{height: 220}} />
       </View>

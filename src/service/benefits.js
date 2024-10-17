@@ -15,6 +15,7 @@ export const getAll = async userData => {
         },
       },
     );
+
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error('Network Error');

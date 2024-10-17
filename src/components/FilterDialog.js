@@ -1,19 +1,29 @@
 import * as React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Button, Dialog, Portal, Text, IconButton} from 'react-native-paper';
-import {
-  EducationLevel,
-  Gender,
-  IncomeRange,
-  BenefitAmount,
-  Subjet,
-} from '../constatnt/Constant';
 import Dropdown from './common/inputs/Dropdown';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-const FilterDialog = () => {
+const FilterDialog = ({inputs, onFilter}) => {
   const [visible, setVisible] = React.useState(false);
+  const [values, setValues] = React.useState({});
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
+
+  React.useEffect(() => {
+    const inputsValues = inputs.reduce((acc, item) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {});
+    setValues(inputsValues);
+  }, [inputs]);
+
+  const getValue = (item, value) => {
+    setValues({...values, [item.key]: value});
+  };
+
+  if (!Array.isArray(inputs) || inputs?.length == 0) {
+    return '';
+  }
 
   return (
     <View>
@@ -46,16 +56,27 @@ const FilterDialog = () => {
             <IconButton icon="close" onPress={hideDialog} />
           </View>
           <Dialog.Content>
-            <Dropdown DropdownLabel="Education Level" Data={EducationLevel} />
-            <Dropdown DropdownLabel="Gender" Data={Gender} />
-            <Dropdown DropdownLabel="Income Range" Data={IncomeRange} />
-            <Dropdown DropdownLabel="Benefit Amount" Data={BenefitAmount} />
-            <Dropdown DropdownLabel="Subject" Data={Subjet} />
+            {inputs?.map(item => {
+              return (
+                <React.Fragment key={item.label}>
+                  <Dropdown
+                    DropdownLabel={item?.label}
+                    Data={item?.data}
+                    value={values[item?.key]}
+                    getValue={text => getValue(item, text)}
+                    isOther={true}
+                  />
+                </React.Fragment>
+              );
+            })}
           </Dialog.Content>
           <Dialog.Actions>
             <Button
               mode="contained"
-              onPress={hideDialog}
+              onPress={() => {
+                onFilter(values);
+                hideDialog();
+              }}
               style={styles.actionButton}>
               Apply Filter
             </Button>

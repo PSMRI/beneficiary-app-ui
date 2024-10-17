@@ -61,18 +61,18 @@ const BenefitCard = ({item, navigation}) => {
 };
 BenefitCard.propTypes = {
   item: PropTypes.shape({
-    date: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    subTitle: PropTypes.string.isRequired,
-    benefitAmount: PropTypes.string.isRequired,
-    eligible: PropTypes.arrayOf(PropTypes.string).isRequired,
-    description: PropTypes.string.isRequired,
+    date: PropTypes.string,
+    title: PropTypes.string,
+    subTitle: PropTypes.string,
+    benefitAmount: PropTypes.string,
+    eligible: PropTypes.arrayOf(PropTypes.string),
+    description: PropTypes.string,
     address: PropTypes.string,
     imageUrl: PropTypes.string,
-  }).isRequired,
+  }),
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
+    navigate: PropTypes.func,
+  }),
 };
 
 const styles = StyleSheet.create({

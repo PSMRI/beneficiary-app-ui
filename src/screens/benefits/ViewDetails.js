@@ -47,7 +47,12 @@ const ViewDetails = ({route}) => {
         const resultItem =
           result?.data?.responses?.[0]?.message?.order?.items?.[0] || {};
         setContext(result?.data?.responses?.[0]?.context);
-        setItem(resultItem);
+
+        const docs = resultItem?.tags
+          ?.find(e => e?.descriptor?.code == 'required-docs')
+          ?.list.filter(e => e.value)
+          .map(e => e.value);
+        setItem({...resultItem, document: docs});
         const formData =
           {
             ...(user?.user || {}),
@@ -61,7 +66,6 @@ const ViewDetails = ({route}) => {
           user_id: formData?.user_id,
           benefit_id: id,
         });
-        console.log(appResult?.length);
         if (appResult?.length > 0) {
           setIsApplied(true);
         }
@@ -180,30 +184,38 @@ const ViewDetails = ({route}) => {
             keyExtractor={keyPointsItem => keyPointsItem}
             scrollEnabled={false}
           /> */}
-          <Text style={styles.descriptionHeading}>Mandatory Documents:</Text>
-          <FlatList
-            data={item?.document}
-            renderItem={({item: documentItem}) =>
-              renderItem({item: documentItem})
-            }
-            keyExtractor={documentItem => documentItem}
-            scrollEnabled={false}
-          />
-          <CustomButton
-            label={
-              isApplied ? 'Application Already Submitted' : 'Proceed To Apply'
-            }
-            disabled={isApplied}
-            width="100%"
-            mode="contained"
-            handleClick={() => setVisibleDialog(true)}
-          />
-          <ConfirmationDialog
-            dialogVisible={visibleDialog}
-            closeDialog={closeCOnfirmDialog}
-            handleConfirmation={async () => openCOnfirmDialog()}
-            documents={documents}
-          />
+          {Array.isArray(item?.document) && item?.document.length > 0 && (
+            <View>
+              <Text style={styles.descriptionHeading}>
+                Mandatory Documents:
+              </Text>
+              <FlatList
+                data={item?.document}
+                renderItem={({item: documentItem}) =>
+                  renderItem({item: documentItem})
+                }
+                keyExtractor={documentItem => documentItem}
+                scrollEnabled={false}
+              />
+              <CustomButton
+                label={
+                  isApplied
+                    ? 'Application Already Submitted'
+                    : 'Proceed To Apply'
+                }
+                disabled={isApplied}
+                width="100%"
+                mode="contained"
+                handleClick={() => setVisibleDialog(true)}
+              />
+              <ConfirmationDialog
+                dialogVisible={visibleDialog}
+                closeDialog={closeCOnfirmDialog}
+                handleConfirmation={async () => openCOnfirmDialog()}
+                documents={documents}
+              />
+            </View>
+          )}
         </View>
       </ScrollView>
     </Layout>

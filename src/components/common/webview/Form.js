@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import Button from '../button/Button';
@@ -6,18 +6,11 @@ import Button from '../button/Button';
 const WebViewFormSubmitWithRedirect = ({url, formData, setPageContent}) => {
   const webViewRef = useRef(null);
   const formDataString = JSON.stringify(formData);
-  const [isFormSubmit, setIsFormSubmit] = useState(false);
 
   const handleFormSubmit = () => {
     // Inject JavaScript to submit the form in the WebView
-    const jsCode = `
-      const form = document.querySelector('form'); 
-      if (form) {
-        form.submit();
-      }
-    `;
+    const jsCode = `document.querySelector('button').click();`;
     webViewRef.current.injectJavaScript(jsCode);
-    setIsFormSubmit(true);
   };
 
   const handleNavigationChange = navState => {
@@ -36,7 +29,7 @@ const WebViewFormSubmitWithRedirect = ({url, formData, setPageContent}) => {
 
   const handleWebViewMessage = event => {
     // Capture the page text sent from the WebView
-    if (isFormSubmit) {
+    if (event?.nativeEvent?.canGoBack && setPageContent) {
       setPageContent(event.nativeEvent.data);
     }
   };

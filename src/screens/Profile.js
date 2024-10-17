@@ -23,7 +23,7 @@ const Profile = () => {
       const data = await getDocumentsList();
       updateUserData(result.user, data.data); // Update user data and document list in context
     } catch (error) {
-      console.error('Error fetching user data or documents:', error);
+      console.log('Error fetching user data or documents:', error);
     }
   };
 
@@ -45,7 +45,7 @@ const Profile = () => {
         benificiary: true,
         heading: `${userData?.first_name} ${userData?.last_name}`,
         subHeading: 'Logged in with Digilocker',
-        label: `${userData?.first_name[0]}${userData?.last_name[0]}`,
+        label: `${userData?.first_name?.[0]}${userData?.last_name?.[0]}`,
       }}>
       {/* Scrollable part of the screen */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>

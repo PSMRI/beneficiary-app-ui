@@ -50,12 +50,12 @@ export function BenefitApplicationStackScreen() {
 }
 const AuthScreenStack = createNativeStackNavigator();
 
-export function AuthScreenStackScreen({onLoginSuccess}) {
+export function AuthScreenStackScreen() {
   return (
     <AuthScreenStack.Navigator screenOptions={{headerShown: false}}>
       <AuthScreenStack.Screen name="Splash" component={Splash} />
       <AuthScreenStack.Screen name="Login">
-        {props => <Login {...props} onLoginSuccess={onLoginSuccess} />}
+        {props => <Login {...props} />}
       </AuthScreenStack.Screen>
       <AuthScreenStack.Screen name="Register" component={Register} />
     </AuthScreenStack.Navigator>

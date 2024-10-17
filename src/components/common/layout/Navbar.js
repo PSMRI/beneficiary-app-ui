@@ -28,7 +28,7 @@ const Navbar = () => {
         removeContextData();
         checkToken();
       } catch (error) {
-        console.error('Logout failed:', error);
+        console.error('Logout failed:', error.massage);
       }
     } else {
       console.error('No tokens found, user is not logged in');
