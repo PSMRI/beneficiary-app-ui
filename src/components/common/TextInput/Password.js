@@ -3,9 +3,24 @@ import PropTypes from 'prop-types'; // Import PropTypes for validation
 import {TextInput} from 'react-native-paper';
 import {StyleSheet} from 'react-native';
 
-const PasswordInput = ({label, value, onChangeText, ...props}) => {
+const PasswordInput = ({
+  label,
+  value,
+  onChangeText,
+  marginTop = 0,
+  ...props
+}) => {
   const [showPassword, setShowPassword] = useState(true);
-
+  const styles = StyleSheet.create({
+    input: {
+      marginBottom: 15,
+      height: 56,
+      width: '90%',
+      alignSelf: 'center',
+      backgroundColor: '#FFFFFF',
+      marginTop: marginTop,
+    },
+  });
   return (
     <TextInput
       label={label}
@@ -31,15 +46,5 @@ PasswordInput.propTypes = {
   value: PropTypes.string,
   onChangeText: PropTypes.func,
 };
-
-const styles = StyleSheet.create({
-  input: {
-    marginBottom: 15,
-    height: 50,
-    width: '90%',
-    alignSelf: 'center',
-    backgroundColor: '#FFFFFF',
-  },
-});
 
 export default PasswordInput;

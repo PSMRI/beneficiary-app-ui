@@ -7,7 +7,7 @@ import {logoutUser} from '../../../service/auth';
 import {getToken} from '../../../service/ayncStorage';
 import {AuthContext} from '../../../utils/context/checkToken';
 
-const Navbar = () => {
+const Navbar = ({isMenu = true}) => {
   const {checkToken, removeContextData} = useContext(AuthContext);
   const navigation = useNavigation();
   const languageOptions = [{label: 'EN', value: '1'}];
@@ -36,15 +36,17 @@ const Navbar = () => {
   };
   return (
     <Appbar.Header style={styles.appBarTheme}>
-      <Menu
-        visible={visible}
-        onDismiss={closeMenu}
-        anchor={
-          <Appbar.Action icon="menu" onPress={openMenu} iconColor="#000000" />
-        }>
-        <Menu.Item onPress={navigateHome} title="Home" />
-        <Menu.Item onPress={handleLogout} title="Logout" />
-      </Menu>
+      {isMenu && (
+        <Menu
+          visible={visible}
+          onDismiss={closeMenu}
+          anchor={
+            <Appbar.Action icon="menu" onPress={openMenu} iconColor="#000000" />
+          }>
+          <Menu.Item onPress={navigateHome} title="Home" />
+          <Menu.Item onPress={handleLogout} title="Logout" />
+        </Menu>
+      )}
       <Appbar.Content title="Fast Pass" titleStyle={styles.titleStyle} />
       {/* Language  on the right side */}
       <Dropdown
@@ -60,6 +62,7 @@ const Navbar = () => {
         marginLeft={4}
         borderColor="#4D4639"
         padding={0}
+        backgroundColor="#EDEFFF"
       />
     </Appbar.Header>
   );
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
   appBarTheme: {
     marginTop: '24px',
     marginLeft: '12px',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#EDEFFF',
   },
   titleStyle: {
     fontFamily: 'Poppins-Italic',

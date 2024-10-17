@@ -11,7 +11,7 @@ import BenefitCard from '../../components/common/BenefitCard';
 import {Text} from 'react-native-paper';
 import {getTokenData} from '../../service/ayncStorage';
 import {getUser} from '../../service/auth';
-// import CustomButton from '../../components/common/button/Button';
+
 const List = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);

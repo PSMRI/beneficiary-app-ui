@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import DocumentList from '../components/DocumentList';
 import CustomButton from '../components/common/button/Button';
 import {useNavigation} from '@react-navigation/native';
@@ -61,7 +61,14 @@ const Profile = () => {
       </ScrollView>
     </Layout>
   ) : (
-    <ActivityIndicator />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <ActivityIndicator size="large" />
+    </View>
   );
 };
 

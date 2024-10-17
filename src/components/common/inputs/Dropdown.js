@@ -25,6 +25,7 @@ const DropdownComponent = ({
   getValue,
   isOther = false,
 }) => {
+  // useState
   const [localValue, setLocalValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [otherValue, setOtherValue] = useState('');

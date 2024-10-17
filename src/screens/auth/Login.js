@@ -6,11 +6,17 @@ import {useNavigation} from '@react-navigation/native';
 import CustomTextInput from '../../components/common/TextInput/TextInput';
 import Password from '../../components/common/TextInput/Password';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {getDocumentsList, getUser, loginUser} from '../../service/auth';
+import {
+  getDocumentsList,
+  getUser,
+  loginUser,
+  sendConsent,
+} from '../../service/auth';
 import {ActivityIndicator} from 'react-native-paper';
 import {getTokenData, saveToken} from '../../service/ayncStorage';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import {AuthContext} from '../../utils/context/checkToken';
+import Navbar from '../../components/common/layout/Navbar';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -23,7 +29,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
-  const {checkToken, documents, updateUserData} = useContext(AuthContext);
+  const {checkToken, documents, updateUserData, userData} =
+    useContext(AuthContext);
   const passwordRef = useRef(null);
 
   const handleLogin = async () => {
@@ -70,22 +77,35 @@ const Login = () => {
       const {sub} = await getTokenData(); // Assuming sub is the user identifier
       const result = await getUser(sub);
       const data = await getDocumentsList();
-      updateUserData(result.user, data.data);
+      updateUserData(result?.user, data.data);
     } catch (error) {
       console.log('Error fetching user data or documents:', error.message);
     }
   };
 
+  const handleCofirmation = async () => {
+    try {
+      console.log(await sendConsent(userData?.user_id));
+      checkToken();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
-    <View style={{backgroundColor: '#FAFAFA', height: '100%'}}>
-      <HeadingText handleBack={handleBack} />
-      <Text style={styles.text}>Sign In to your account !</Text>
+    <View style={{backgroundColor: '#FFFFFF', height: '100%'}}>
+      <Navbar isMenu={false} />
+      <HeadingText
+        {...{
+          heading: 'Sign In with E-Wallet',
+          handleBack,
+        }}
+      />
       <View>
         <CustomTextInput
-          label={'Enter username/mobile no'}
+          label={'UserName'}
           value={username}
           onChangeText={setUsername}
-          margin={25}
+          marginBottom={25}
           onSubmitEditing={() => passwordRef.current.focus()}
         />
         <Password
@@ -122,7 +142,7 @@ const Login = () => {
       <ConfirmationDialog
         dialogVisible={dialogVisible}
         closeDialog={setDialogVisible}
-        handleConfirmation={checkToken}
+        handleConfirmation={handleCofirmation}
         documents={documents}
       />
     </View>

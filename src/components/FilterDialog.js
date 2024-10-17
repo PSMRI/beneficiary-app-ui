@@ -10,7 +10,7 @@ const FilterDialog = ({inputs, onFilter}) => {
   const hideDialog = () => setVisible(false);
 
   React.useEffect(() => {
-    const inputsValues = inputs.reduce((acc, item) => {
+    const inputsValues = inputs?.reduce((acc, item) => {
       acc[item.key] = item.value;
       return acc;
     }, {});

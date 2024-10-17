@@ -47,7 +47,6 @@ const ViewDetails = ({route}) => {
         const resultItem =
           result?.data?.responses?.[0]?.message?.order?.items?.[0] || {};
         setContext(result?.data?.responses?.[0]?.context);
-
         const docs = resultItem?.tags
           ?.find(e => e?.descriptor?.code == 'required-docs')
           ?.list.filter(e => e.value)

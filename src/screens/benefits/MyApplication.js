@@ -24,12 +24,13 @@ const MyApplication = ({route}) => {
   const handleBack = () => {
     navigation.navigate('BenefitApplication');
   };
+
   const init = async () => {
     try {
       const result = await getApplicationDetails(id);
       setUserData(result?.application_data);
-      console.log(result?.application_data);
-      setBenefit_name(result?.application_name);
+      console.log('application details', result?.application_data);
+      setBenefit_name(result?.external_application_id);
     } catch (error) {
       console.error('Error fetching application details:', error);
     }
@@ -42,13 +43,13 @@ const MyApplication = ({route}) => {
     <Layout
       _heading={{
         heading: 'My Applications',
-        subHeading: `Application for ${benefit_name}`,
+        subHeading: `Application ID ${benefit_name}`,
         handleBack,
       }}
       isScrollable>
       <View style={styles.applicationRow}>
         <Text style={styles.leftText}>Status</Text>
-        <Text style={styles.rightText}>Approved</Text>
+        <Text style={styles.rightText}>Submitted</Text>
       </View>
       <ScrollView contentContainerStyle={styles.applicationContainer}>
         {myApplicationData?.map(field => {
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   rightText: {
     fontSize: 10,
-    color: '#0B7B69',
+    color: '#EDA145',
     fontFamily: 'Poppins-Medium',
     fontWeight: 'bold',
   },

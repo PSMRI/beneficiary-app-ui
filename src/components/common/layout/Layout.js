@@ -9,6 +9,7 @@ export default function Layout({
   isScrollable = true,
   loading,
   children,
+  isMenu = true,
   ...props
 }) {
   if (loading) {
@@ -33,6 +34,7 @@ export default function Layout({
 }
 
 Layout.propTypes = {
+  isMenu: PropTypes.bool,
   loading: PropTypes.bool,
   isScrollable: PropTypes.bool, // Expecting a boolean for isScrollable
   children: PropTypes.node, // Expecting React elements as children
@@ -51,10 +53,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const App = ({children, afterHeader, _heading}) => {
+const App = ({children, afterHeader, _heading, isMenu}) => {
   return (
     <>
-      <Navbar />
+      <Navbar isMenu />
       <HeadingText {..._heading} />
       {afterHeader}
       {children}

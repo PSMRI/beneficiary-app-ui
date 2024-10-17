@@ -31,17 +31,17 @@ const ApplicationList = ({applicationList}) => {
               icon={'check-circle'}
               size={20}
               style={styles.icon}
-              iconColor={'#0B7B69'}
+              iconColor={'#EDA145'}
             />
-            <Text style={styles.subheaderText}>Approved</Text>
+            <Text style={styles.subheaderText}>Submitted</Text>
           </View>
           <View style={styles.divider} />
           {applicationList?.map(app => (
             <List.Item
               key={app.benefit_id}
               title={app.application_name}
+              titleStyle={{fontFamily: 'Poppins-Regular', fontSize: 14}}
               style={styles.listItem}
-              right={() => statusIcon('Disbursal Complete')}
               onPress={() => {
                 navigation.navigate('MyApplication', {
                   id: app?.internal_application_id,
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1F1B13',
     flex: 1,
+    fontFamily: 'Poppins-Regular',
   },
   divider: {
     padding: 0,
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    fontFamily: 'Poppins-Regular',
   },
   statusContainer: {
     flexDirection: 'row',

@@ -76,7 +76,28 @@ export const getUser = async userId => {
     throw error; // Optionally re-throw the error for further handling
   }
 };
+export const sendConsent = async user_id => {
+  const data = {
+    user_id: user_id,
+    purpose: 'Confirmation to access documents',
+    purpose_text: 'Confirmation to access documents',
+    accepted: true,
+  };
 
+  const headers = {
+    Accept: '*/*',
+    'Content-Type': 'application/json',
+  };
+
+  try {
+    const response = await axios.post(`${API_BASE_URL}/users/consent`, data, {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 export const getDocumentsList = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/content/documents_list`, {

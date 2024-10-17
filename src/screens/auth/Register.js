@@ -8,6 +8,7 @@ import Password from '../../components/common/TextInput/Password';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {registerUser} from '../../service/auth';
 import {ActivityIndicator} from 'react-native-paper';
+import Layout from '../../components/common/layout/Layout';
 const Register = () => {
   const navigation = useNavigation();
   const handleBack = () => {
@@ -56,62 +57,72 @@ const Register = () => {
     }
   };
   return (
-    <View style={{backgroundColor: '#FFFFFF', height: '100%'}}>
-      <HeadingText handleBack={handleBack} />
-      <Text style={styles.text}>Sign Up !</Text>
-      <View>
-        <CustomTextInput
-          label={'Enter First Name'}
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-        <CustomTextInput
-          label={'Enter Last Name'}
-          value={lastName}
-          onChangeText={setLastName}
-        />
-        <CustomTextInput
-          label={'Enter Mobile No'}
-          value={mobile}
-          onChangeText={setMobile}
-          keyboardType="phone-pad"
-          maxLength={10}
-        />
-        <Password
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <Password
-          label="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-        {error && (
-          <View style={styles.errorContainer}>
-            <MaterialCommunityIcons
-              name="alert-circle"
-              size={20}
-              color="#8C1823"
+    <Layout
+      _heading={{
+        heading: 'Sign Up with E-Wallet',
+        handleBack,
+      }}
+      isMenu={false}>
+      <View style={{backgroundColor: '#FFFFFF', height: '100%'}}>
+        <View>
+          <CustomTextInput
+            label={'Enter First Name'}
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+          <CustomTextInput
+            label={'Enter Last Name'}
+            value={lastName}
+            onChangeText={setLastName}
+          />
+          <CustomTextInput
+            label={'Enter Mobile No'}
+            value={mobile}
+            onChangeText={setMobile}
+            keyboardType="phone-pad"
+            maxLength={10}
+          />
+          <Password
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            marginTop={15}
+          />
+          <Password
+            label="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+          {error && (
+            <View style={styles.errorContainer}>
+              <MaterialCommunityIcons
+                name="alert-circle"
+                size={20}
+                color="#8C1823"
+              />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          )}
+          {loading ? (
+            <ActivityIndicator animating={true} color="#3C5FDD" />
+          ) : (
+            <CustomButton
+              label="Sign Up"
+              width="90%"
+              handleClick={handleLogin}
             />
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        )}
-        {loading ? (
-          <ActivityIndicator animating={true} color="#3C5FDD" />
-        ) : (
-          <CustomButton label="Sign Up" width="90%" handleClick={handleLogin} />
-        )}
+          )}
+        </View>
+        <Text style={styles.signUpText}>Already Have An Account?</Text>
+        <Pressable
+          onPress={() => {
+            navigation.navigate('Login');
+          }}
+          style={{alignSelf: 'center'}}>
+          <Text style={styles.signUpButton}>Sign In</Text>
+        </Pressable>
       </View>
-      <Text style={styles.signUpText}>Do have account</Text>
-      <Pressable
-        onPress={() => {
-          navigation.navigate('Login');
-        }}
-        style={{alignSelf: 'center'}}>
-        <Text style={styles.signUpButton}>Sign In</Text>
-      </Pressable>
-    </View>
+    </Layout>
   );
 };
 
@@ -138,9 +149,9 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   signUpText: {
-    fontSize: 12,
+    fontSize: 16,
     fontFamily: 'Poppins-Medium',
-    color: 'black',
+    color: '#4D4639',
     textAlign: 'center',
     marginTop: 10,
   },

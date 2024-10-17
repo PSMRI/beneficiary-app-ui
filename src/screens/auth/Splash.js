@@ -29,6 +29,7 @@ const Splash = () => {
           Data={languageOptions}
           helperText={'You can change this later'}
           helperData={true}
+          value={selectedLanguage}
           getValue={setSelectedLanguage}
         />
         <Button

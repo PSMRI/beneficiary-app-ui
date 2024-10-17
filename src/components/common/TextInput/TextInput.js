@@ -8,15 +8,17 @@ const CustomTextInput = ({
   value,
   onChangeText,
   margin = 10,
+  marginBottom = 0,
   ...rest
 }) => {
   const styles = StyleSheet.create({
     input: {
       margin: margin,
-      height: 50,
+      height: 56,
       width: '90%',
       alignSelf: 'center',
       backgroundColor: '#FFFFFF',
+      marginBottom: marginBottom,
     },
   });
   return (
