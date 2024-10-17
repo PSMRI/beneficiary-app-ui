@@ -1,10 +1,12 @@
 import React, {useRef, useState} from 'react';
-import {View, Button, Text} from 'react-native';
+import {View} from 'react-native';
 import {WebView} from 'react-native-webview';
+import Button from '../button/Button';
 
 const WebViewFormSubmitWithRedirect = ({url, formData, setPageContent}) => {
   const webViewRef = useRef(null);
   const formDataString = JSON.stringify(formData);
+  const [isFormSubmit, setIsFormSubmit] = useState(false);
 
   const handleFormSubmit = () => {
     // Inject JavaScript to submit the form in the WebView
@@ -15,6 +17,7 @@ const WebViewFormSubmitWithRedirect = ({url, formData, setPageContent}) => {
       }
     `;
     webViewRef.current.injectJavaScript(jsCode);
+    setIsFormSubmit(true);
   };
 
   const handleNavigationChange = navState => {
@@ -33,7 +36,9 @@ const WebViewFormSubmitWithRedirect = ({url, formData, setPageContent}) => {
 
   const handleWebViewMessage = event => {
     // Capture the page text sent from the WebView
-    setPageContent(event.nativeEvent.data);
+    if (isFormSubmit) {
+      setPageContent(event.nativeEvent.data);
+    }
   };
 
   return (
@@ -44,7 +49,7 @@ const WebViewFormSubmitWithRedirect = ({url, formData, setPageContent}) => {
         javaScriptEnabled={true}
         injectedJavaScript={`
         (function() {
-          const submitButton = document.querySelector('input[type="submit"]');
+          const submitButton = document.querySelector('button[type="submit"]');
           if (submitButton) {
             submitButton.style.display = 'none';
           }
@@ -73,7 +78,13 @@ const WebViewFormSubmitWithRedirect = ({url, formData, setPageContent}) => {
         onNavigationStateChange={handleNavigationChange}
         onMessage={handleWebViewMessage}
       />
-      <Button title="Submit Form" onPress={handleFormSubmit} />
+      <Button
+        style={{
+          backgroundColor: '#fff',
+        }}
+        label="Submit Form"
+        handleClick={handleFormSubmit}
+      />
     </View>
   );
 };

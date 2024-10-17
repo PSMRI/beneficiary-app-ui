@@ -7,7 +7,6 @@ const CustomButton = ({
   testId,
   label = 'Click me',
   mode = 'contained',
-
   width = 'maxWidth',
   borderRadius = 30,
   handleClick,
@@ -15,8 +14,9 @@ const CustomButton = ({
   padding = 0,
   borderColor = '#3C5FDD',
   marginBottom = 0,
+  style,
 }) => (
-  <View style={styles.view}>
+  <View style={{...styles?.view, ...style}}>
     <Button
       mode={mode}
       onPress={handleClick}

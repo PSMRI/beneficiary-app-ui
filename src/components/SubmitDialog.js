@@ -34,12 +34,14 @@ const SubmitDialog = ({dialogVisible, closeSubmit}) => {
             <Text style={styles.text}>
               Your application to the <Text> </Text>
               <Text style={styles.scholarshipNameText}>
-                Pre-Matric Scholarship-SC
+                {dialogVisible?.name}
               </Text>
               <Text> </Text>
               Benefit has been submitted!
             </Text>
-            <Text style={styles.applicationIdText}>Application ID: 1303</Text>
+            <Text style={styles.applicationIdText}>
+              Application ID: {dialogVisible?.orderId}
+            </Text>
           </Dialog.Content>
           <Dialog.Actions>
             {/* Applying styles to the Button */}

@@ -4,7 +4,7 @@ import CustomButton from '../../components/common/button/Button';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import Layout from '../../components/common/layout/Layout';
 import {useNavigation} from '@react-navigation/native';
-import {Icon} from 'react-native-paper';
+import {ActivityIndicator, Icon} from 'react-native-paper';
 import * as benefitServis from '../../service/benefits';
 import WebViewFormExample from '../../components/common/webview/Form';
 import {getTokenData} from '../../service/ayncStorage';
@@ -16,7 +16,7 @@ const ViewDetails = ({route}) => {
   const [visibleDialog, setVisibleDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   const [webFromProp, setWebFromProp] = useState({});
-
+  const [authUser, setAuthUser] = useState();
   const [item, setItem] = useState();
   const navigation = useNavigation();
   const [context, setContext] = useState({});
@@ -26,26 +26,24 @@ const ViewDetails = ({route}) => {
   };
   const openCOnfirmDialog = async () => {
     setLoading(true);
-    console.log('sagar', ' user');
-
     const result = await benefitServis.applyApplication({id, context});
     const {sub} = await getTokenData(); // Assuming sub is the user identifier
     const user = await getUser(sub);
-    console.log('sagar', user);
+    const formData =
+      {
+        ...(user?.user || {}),
+        ...(user?.userInfo || {}),
+        class: user?.userInfo?.current_class || '',
+        marks_previous_class: user?.userInfo?.previous_year_marks || '',
+        phone_number: user?.userInfo?.phone || '',
+      } || {};
+    setAuthUser(formData);
     setWebFromProp({
       url: result?.data?.responses?.[0]?.message?.order?.items?.[0]?.xinput
         ?.form?.url,
-      formData:
-        {
-          ...(user?.user || {}),
-          ...(user?.userInfo || {}),
-          class: user?.userInfo?.current_class || '',
-          marks_previous_class: user?.userInfo?.previous_year_marks || '',
-          phone_number: user?.userInfo?.phone || '',
-        } || {},
+      formData,
     });
     setLoading(false);
-    // setVisibleDialog(true);
   };
 
   const closeCOnfirmDialog = () => {
@@ -76,10 +74,50 @@ const ViewDetails = ({route}) => {
     {id: 3, name: 'Caste Certificate'},
     {id: 4, name: 'Domicile Certificate'},
   ];
-  const submitConfirm = async id => {
-    console.log(id, 'sagar');
-    setWebFromProp();
+  const submitConfirm = async submission_id => {
+    setLoading(true);
+    const result = await benefitServis.confirmApplication({
+      submission_id,
+      context,
+    });
+    const orderId = result?.data?.responses?.[0]?.message?.order?.id;
+    if (orderId) {
+      const payload = {
+        user_id: authUser?.user_id,
+        benefit_id: id,
+        benefit_provider_id: context?.bpp_id,
+        benefit_provider_uri: context?.bap_uri,
+        external_application_id: orderId,
+        application_name: item?.descriptor?.name,
+        status: 'submitted',
+        application_data: authUser,
+      };
+      try {
+        const appResult = await benefitServis.createApplication(payload);
+        if (appResult) {
+          setWebFromProp();
+          setVisibleDialog({orderId, name: item?.descriptor?.name});
+          setLoading(false);
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    }
+    setLoading(false);
   };
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
   if (webFromProp?.url) {
     return (
       <WebViewFormExample {...webFromProp} setPageContent={submitConfirm} />
@@ -87,7 +125,6 @@ const ViewDetails = ({route}) => {
   }
   return (
     <Layout
-      loading={loading}
       _heading={{
         heading: 'Pre-Matric Scholarship-ST',
         subHeading: 'Application for SC Scholarship1',
@@ -113,7 +150,7 @@ const ViewDetails = ({route}) => {
               {item?.descriptor?.long_desc}
             </Text>
           </View>
-          <Text style={styles.descriptionHeading}>
+          {/* <Text style={styles.descriptionHeading}>
             Objectives of the Pre-matric Scholarship-ST:
           </Text>
           <FlatList
@@ -124,9 +161,7 @@ const ViewDetails = ({route}) => {
             keyExtractor={objectiveItem => objectiveItem}
             style={styles}
             scrollEnabled={false}
-          />
-
-          <Text style={styles.descriptionHeading}>Key Points:</Text>
+          /> <Text style={styles.descriptionHeading}>Key Points:</Text>
           <FlatList
             data={item?.keyPoints}
             renderItem={({item: keyPointsItem}) =>
@@ -134,7 +169,7 @@ const ViewDetails = ({route}) => {
             }
             keyExtractor={keyPointsItem => keyPointsItem}
             scrollEnabled={false}
-          />
+          /> */}
           <Text style={styles.descriptionHeading}>Mandatory Documents:</Text>
           <FlatList
             data={item?.document}
@@ -149,12 +184,12 @@ const ViewDetails = ({route}) => {
             marginTop={18}
             height={40}
             width={'95%'}
-            handleClick={async () => openCOnfirmDialog()}
+            handleClick={() => setVisibleDialog(true)}
           />
           <ConfirmationDialog
             dialogVisible={visibleDialog}
             closeDialog={closeCOnfirmDialog}
-            submitDialog={true}
+            handleConfirmation={async () => openCOnfirmDialog()}
             documents={documents}
           />
         </View>

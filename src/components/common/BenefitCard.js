@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import {Icon} from 'react-native-paper';
 import {
   extractEligibilityValues,
-  extractMandatoryDocuments,
   formatDateString,
 } from '../../utils/JsHelper/helper';
 
