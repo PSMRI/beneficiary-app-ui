@@ -182,3 +182,23 @@ export const createApplication = async data => {
     throw error.response ? error.response.data : new Error('Network Error');
   }
 };
+
+export const getApplication = async filters => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/users/user_applications_list`,
+      {
+        filters,
+      },
+      {
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : new Error('Network Error');
+  }
+};

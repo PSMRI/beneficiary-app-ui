@@ -20,28 +20,17 @@ const ViewDetails = ({route}) => {
   const [item, setItem] = useState();
   const navigation = useNavigation();
   const [context, setContext] = useState({});
-
+  const [isApplied, setIsApplied] = useState(false);
   const handleBack = () => {
     navigation.navigate('BenefitsListing');
   };
   const openCOnfirmDialog = async () => {
     setLoading(true);
     const result = await benefitServis.applyApplication({id, context});
-    const {sub} = await getTokenData(); // Assuming sub is the user identifier
-    const user = await getUser(sub);
-    const formData =
-      {
-        ...(user?.user || {}),
-        ...(user?.userInfo || {}),
-        class: user?.userInfo?.current_class || '',
-        marks_previous_class: user?.userInfo?.previous_year_marks || '',
-        phone_number: user?.userInfo?.phone || '',
-      } || {};
-    setAuthUser(formData);
     setWebFromProp({
       url: result?.data?.responses?.[0]?.message?.order?.items?.[0]?.xinput
         ?.form?.url,
-      formData,
+      formData: authUser,
     });
     setLoading(false);
   };
@@ -52,9 +41,30 @@ const ViewDetails = ({route}) => {
   useEffect(() => {
     const init = async () => {
       try {
+        const {sub} = await getTokenData(); // Assuming sub is the user identifier
+        const user = await getUser(sub);
         const result = await benefitServis.getOne({id});
+        const resultItem =
+          result?.data?.responses?.[0]?.message?.order?.items?.[0] || {};
         setContext(result?.data?.responses?.[0]?.context);
-        setItem(result?.data?.responses?.[0]?.message?.order?.items?.[0] || {});
+        setItem(resultItem);
+        const formData =
+          {
+            ...(user?.user || {}),
+            ...(user?.userInfo || {}),
+            class: user?.userInfo?.current_class || '',
+            marks_previous_class: user?.userInfo?.previous_year_marks || '',
+            phone_number: user?.userInfo?.phone || '',
+          } || {};
+        setAuthUser(formData);
+        const appResult = await benefitServis.getApplication({
+          user_id: formData?.user_id,
+          benefit_id: id,
+        });
+        console.log(appResult?.length);
+        if (appResult?.length > 0) {
+          setIsApplied(true);
+        }
         setLoading(false);
       } catch (e) {
         console.log('Error:', e.message);
@@ -180,10 +190,12 @@ const ViewDetails = ({route}) => {
             scrollEnabled={false}
           />
           <CustomButton
-            label="Proceed To Apply"
-            marginTop={18}
-            height={40}
-            width={'95%'}
+            label={
+              isApplied ? 'Application Already Submitted' : 'Proceed To Apply'
+            }
+            disabled={isApplied}
+            width="100%"
+            mode="contained"
             handleClick={() => setVisibleDialog(true)}
           />
           <ConfirmationDialog

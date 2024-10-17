@@ -15,9 +15,11 @@ const CustomButton = ({
   borderColor = '#3C5FDD',
   marginBottom = 0,
   style,
+  disabled,
 }) => (
   <View style={{...styles?.view, ...style}}>
     <Button
+      disabled={disabled}
       mode={mode}
       onPress={handleClick}
       testID={testId}
