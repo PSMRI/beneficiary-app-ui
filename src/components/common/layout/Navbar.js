@@ -8,7 +8,7 @@ import {getToken} from '../../../service/ayncStorage';
 import {AuthContext} from '../../../utils/context/checkToken';
 
 const Navbar = () => {
-  const {checkToken} = useContext(AuthContext);
+  const {checkToken, removeContextData} = useContext(AuthContext);
   const navigation = useNavigation();
   const languageOptions = [{label: 'EN', value: '1'}];
   const [visible, setVisible] = React.useState(false);
@@ -25,8 +25,8 @@ const Navbar = () => {
     if (token?.token && token?.refreshToken) {
       try {
         await logoutUser(token.token, token.refreshToken); // Call the logout function
+        removeContextData();
         checkToken();
-        // Optionally navigate to login screen here
       } catch (error) {
         console.error('Logout failed:', error);
       }

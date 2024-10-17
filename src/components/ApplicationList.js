@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleSheet, View, ScrollView, Text} from 'react-native';
 import {List, IconButton} from 'react-native-paper';
 import PropTypes from 'prop-types';
-import {TrackApplicationList} from '../constatnt/Constant';
 import {useNavigation} from '@react-navigation/native';
+
 const statusIcon = status => {
   return (
     <View style={styles.statusContainer}>
@@ -20,44 +20,36 @@ statusIcon.propTypes = {
   status: PropTypes.string.isRequired,
 };
 
-const ApplicationList = () => {
+const ApplicationList = ({applicationList}) => {
   const navigation = useNavigation();
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <List.Section>
-        {TrackApplicationList.map((item, index) => {
-          const key = Object.keys(item)[0];
-          const applications = item[key];
-
-          return (
-            <View key={key} style={styles.sectionContainer}>
-              <View style={styles.headerContainer}>
-                <IconButton
-                  icon={key === 'Approved' ? 'check-circle' : 'close-circle'}
-                  size={20}
-                  style={styles.icon}
-                  iconColor={key === 'Approved' ? '#0B7B69' : '#8C1823'}
-                />
-                <Text style={styles.subheaderText}>
-                  {key.charAt(0).toUpperCase() +
-                    key.slice(1).replace(/([A-Z])/g, ' ')}
-                </Text>
-              </View>
-              <View style={styles.divider} />
-              {applications.map((app, appIndex) => (
-                <List.Item
-                  key={app.applicationNo}
-                  title={app.applicationNo}
-                  style={styles.listItem}
-                  right={() => statusIcon(app.status)}
-                  onPress={() => {
-                    navigation.navigate('MyApplication');
-                  }}
-                />
-              ))}
-            </View>
-          );
-        })}
+        <View style={styles.sectionContainer}>
+          <View style={styles.headerContainer}>
+            <IconButton
+              icon={'check-circle'}
+              size={20}
+              style={styles.icon}
+              iconColor={'#0B7B69'}
+            />
+            <Text style={styles.subheaderText}>Approved</Text>
+          </View>
+          <View style={styles.divider} />
+          {applicationList?.map(app => (
+            <List.Item
+              key={app.benefit_id}
+              title={app.application_name}
+              style={styles.listItem}
+              right={() => statusIcon('Disbursal Complete')}
+              onPress={() => {
+                navigation.navigate('MyApplication', {
+                  id: app?.internal_application_id,
+                });
+              }}
+            />
+          ))}
+        </View>
       </List.Section>
     </ScrollView>
   );

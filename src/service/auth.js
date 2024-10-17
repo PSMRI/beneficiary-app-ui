@@ -92,3 +92,53 @@ export const getDocumentsList = async () => {
     throw error; // Optionally re-throw the error for further handling
   }
 };
+export const getApplicationList = async (searchText, user_id) => {
+  try {
+    // Create the request body, conditionally adding searchText if it's not empty
+    const requestBody =
+      searchText !== ''
+        ? {
+            filters: {
+              user_id: user_id, // Reference the user_id variable directly
+            },
+            search: searchText,
+          }
+        : {
+            filters: {
+              user_id: user_id, // Reference the user_id variable directly
+            },
+          };
+
+    // Send the dynamically created requestBody in the axios post request
+    const response = await axios.post(
+      `${API_BASE_URL}/users/user_applications_list`,
+      requestBody, // Use the dynamically created requestBody
+      {
+        headers: {
+          Accept: '*/*',
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch application list:', error);
+    throw error;
+  }
+};
+export const getApplicationDetails = async applicationId => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/users/user_application/${applicationId}`,
+      {
+        headers: {
+          Accept: '*/*',
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch application details:', error);
+    throw error;
+  }
+};

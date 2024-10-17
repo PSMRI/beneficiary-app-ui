@@ -6,7 +6,7 @@ const AuthContext = createContext();
 const AuthProvider = ({children}) => {
   // Auth states
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [applicationId, setApplicationId] = useState();
   // User data states
   const [userData, setUserData] = useState(null);
   const [documents, setDocuments] = useState([]);
@@ -25,10 +25,14 @@ const AuthProvider = ({children}) => {
     setUserData(user);
     setDocuments(docs);
   };
-  const updateDocument = docs => {
-    setDocuments(docs);
+  const updateApplicationId = id => {
+    setApplicationId(id);
   };
-
+  const removeContextData = () => {
+    setApplicationId(null);
+    setDocuments([]);
+    setUserData(null);
+  };
   useEffect(() => {
     checkToken();
   }, []);
@@ -42,6 +46,9 @@ const AuthProvider = ({children}) => {
         userData,
         documents,
         updateUserData,
+        updateApplicationId,
+        applicationId,
+        removeContextData,
       }}>
       {children}
     </AuthContext.Provider>

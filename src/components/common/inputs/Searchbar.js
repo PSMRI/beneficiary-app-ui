@@ -1,16 +1,24 @@
 import * as React from 'react';
 import {StyleSheet, View, TextInput} from 'react-native';
+import {IconButton} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the icon library
 
-const Searchbar = () => {
+const Searchbar = ({onSearch}) => {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   return (
     <View style={styles.Searchcontainer}>
       <View style={styles.searchWrapper}>
         {/* Search Icon on the left */}
-        <Icon name="search" size={24} color="#45464F" style={styles.icon} />
-
+        <IconButton
+          icon="magnify" // Equivalent to 'search' in Material Icons
+          size={24}
+          color="#45464F"
+          style={styles.iconButton}
+          onPress={() => {
+            onSearch(searchQuery);
+          }}
+        />
         {/* TextInput for search bar */}
         <TextInput
           placeholder="Search By Name"

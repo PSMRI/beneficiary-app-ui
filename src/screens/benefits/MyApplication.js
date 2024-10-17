@@ -1,52 +1,65 @@
-import React from 'react';
-import {View, TextInput, StyleSheet, Text, ScrollView} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {myApplicationData} from '../../constatnt/Constant';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, Text, ScrollView} from 'react-native';
 import Layout from '../../components/common/layout/Layout';
 import {useNavigation} from '@react-navigation/native';
-const MyApplication = () => {
-  const [isDisabled] = React.useState(false);
+import {getApplicationDetails} from '../../service/auth';
+import TextInputWithLabel from '../../components/common/TextInput/TextInputWithLabel';
+const myApplicationData = [
+  {id: 1, label: 'Full Name', value: 'first_name'},
+  {id: 2, label: 'Last Name', value: 'last_name'},
+  {id: 3, label: 'Gender', value: 'gender'},
+  {id: 4, label: 'Age', value: 'age'},
+  {id: 5, label: 'Samagra Id', value: 'samagra_id'},
+  {id: 6, label: 'Class', value: 'class'},
+  {id: 7, label: 'Adhaar Card', value: 'aadhar'},
+  {id: 8, label: 'Marks', value: 'previous_year_marks'},
+  {id: 9, label: 'Caste', value: 'caste'},
+  {id: 10, label: 'School Name', value: 'current_school_name'},
+];
+const MyApplication = ({route}) => {
+  const {id} = route.params;
   const navigation = useNavigation();
+  const [userData, setUserData] = useState();
+  const [benefit_name, setBenefit_name] = useState();
   const handleBack = () => {
     navigation.navigate('BenefitApplication');
   };
+  const init = async () => {
+    try {
+      const result = await getApplicationDetails(id);
+      setUserData(result?.application_data);
+      console.log(result?.application_data);
+      setBenefit_name(result?.application_name);
+    } catch (error) {
+      console.error('Error fetching application details:', error);
+    }
+  };
+  useEffect(() => {
+    init();
+  }, []);
 
   return (
     <Layout
       _heading={{
         heading: 'My Applications',
-        subHeading: 'Application for SC Scholarship1',
+        subHeading: `Application for ${benefit_name}`,
         handleBack,
       }}
       isScrollable>
       <View style={styles.applicationRow}>
         <Text style={styles.leftText}>Status</Text>
-        <Text style={styles.rightText}>Applied</Text>
+        <Text style={styles.rightText}>Approved</Text>
       </View>
       <ScrollView contentContainerStyle={styles.applicationContainer}>
-        {myApplicationData?.map((field, index) => (
-          <View key={field.id} style={styles.inputBlock}>
-            {/* Label */}
-            <Text style={styles.label}>{field.label} </Text>
-            {/* Input Field with Icon */}
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={[styles.input, isDisabled ? styles.disabledInput : null]}
-                value={field.value}
-                //   onChangeText={(text) => handleInputChange(field, text)}
-                editable={false}
-                placeholder={field.value}
-              />
-              {/* Check Icon */}
-              <Icon
-                name="checkmark-outline"
-                size={24}
-                color="#0B7B69"
-                style={styles.applicationIcon}
-              />
-            </View>
-          </View>
-        ))}
+        {myApplicationData?.map(field => {
+          return (
+            <TextInputWithLabel
+              key={field.id}
+              {...field}
+              value={userData?.[field.value]}
+            />
+          );
+        })}
       </ScrollView>
     </Layout>
   );

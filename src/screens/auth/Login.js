@@ -19,7 +19,7 @@ const Login = ({onLoginSuccess}) => {
     navigation.navigate('Splash');
   };
 
-  const [mobile, setMobile] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,14 +33,8 @@ const Login = ({onLoginSuccess}) => {
       }, 3000);
     };
 
-    if (!mobile) {
-      setError('Enter Mobile No');
-      clearError();
-      return;
-    }
-
-    if (mobile.length !== 10) {
-      setError('Mobile number must be 10 digits');
+    if (!username) {
+      setError('Enter Username ');
       clearError();
       return;
     }
@@ -53,7 +47,7 @@ const Login = ({onLoginSuccess}) => {
 
     try {
       setLoading(true); // Show loading indicator
-      const response = await loginUser({phone_number: mobile, password});
+      const response = await loginUser({phone_number: username, password});
       setLoading(false); // Hide loading indicator after response
       saveToken(response.data.access_token, response.data.refresh_token);
       init();
@@ -86,11 +80,9 @@ const Login = ({onLoginSuccess}) => {
       <Text style={styles.text}>Sign In to your account !</Text>
       <View>
         <CustomTextInput
-          label={'Enter Mobile No'}
-          value={mobile}
-          onChangeText={setMobile}
-          keyboardType="phone-pad"
-          maxLength={10}
+          label={'Enter username/mobile no'}
+          value={username}
+          onChangeText={setUsername}
           margin={25}
         />
         <Password
