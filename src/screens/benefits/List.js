@@ -15,7 +15,7 @@ import {getUser} from '../../service/auth';
 const List = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
-
+  const [search, setSearch] = useState('');
   const [filter, setFilter] = useState({});
   // const [hasMore] = useState(true);
   // const benefits = data.ubi_network_cache; // data from API
@@ -50,13 +50,14 @@ const List = () => {
       setLoading(true);
       const result = await benefitServis.getAll({
         filters: {...filter, 'ann-hh-inc': `0-${filter?.['ann-hh-inc']}`},
+        search,
       });
       setBenefits(result?.data?.ubi_network_cache || []);
 
       setLoading(false);
     };
     init();
-  }, [filter]);
+  }, [filter, search]);
 
   return (
     <Layout
@@ -67,6 +68,7 @@ const List = () => {
       isScrollable={true}
       afterHeader={
         <SearchHeader
+          onSearch={setSearch}
           inputs={[
             {
               label: 'Cast',
