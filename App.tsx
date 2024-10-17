@@ -5,14 +5,10 @@ import BottomNavigation from './src/navigation/BottomNavigation';
 import {AuthContext, AuthProvider} from './src/utils/context/checkToken';
 
 const AppContent = () => {
-  const {isLoggedIn, checkToken} = useContext(AuthContext);
+  const {isLoggedIn} = useContext(AuthContext);
   return (
     <NavigationContainer>
-      {isLoggedIn ? (
-        <BottomNavigation />
-      ) : (
-        <AuthScreenStackScreen onLoginSuccess={checkToken} />
-      )}
+      {isLoggedIn ? <BottomNavigation /> : <AuthScreenStackScreen />}
     </NavigationContainer>
   );
 };

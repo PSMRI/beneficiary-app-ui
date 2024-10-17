@@ -34,6 +34,8 @@ export default function Layout({
 }
 
 Layout.propTypes = {
+  isMenu: PropTypes.bool,
+  loading: PropTypes.bool,
   isScrollable: PropTypes.bool, // Expecting a boolean for isScrollable
   children: PropTypes.node, // Expecting React elements as children
 };

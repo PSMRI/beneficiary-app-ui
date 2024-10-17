@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import DocumentList from '../components/DocumentList';
 import CustomButton from '../components/common/button/Button';
 import {useNavigation} from '@react-navigation/native';
@@ -23,7 +23,7 @@ const Profile = () => {
       const data = await getDocumentsList();
       updateUserData(result.user, data.data); // Update user data and document list in context
     } catch (error) {
-      console.error('Error fetching user data or documents:', error);
+      console.log('Error fetching user data or documents:', error);
     }
   };
 
@@ -45,7 +45,7 @@ const Profile = () => {
         benificiary: true,
         heading: `${userData?.first_name} ${userData?.last_name}`,
         subHeading: 'Logged in with Digilocker',
-        label: `${userData?.first_name[0]}${userData?.last_name[0]}`,
+        label: `${userData?.first_name?.[0]}${userData?.last_name?.[0]}`,
       }}>
       {/* Scrollable part of the screen */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -61,7 +61,14 @@ const Profile = () => {
       </ScrollView>
     </Layout>
   ) : (
-    <ActivityIndicator />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <ActivityIndicator size="large" />
+    </View>
   );
 };
 

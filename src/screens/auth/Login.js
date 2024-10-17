@@ -1,6 +1,5 @@
-import React, {useContext, useState} from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes for validation
-import {View, Text, StyleSheet, Pressable} from 'react-native';
+import React, {useContext, useState, useRef} from 'react';
+import {View, Text, StyleSheet, Pressable, Keyboard} from 'react-native';
 import HeadingText from '../../components/common/layout/HeadingText';
 import CustomButton from '../../components/common/button/Button';
 import {useNavigation} from '@react-navigation/native';
@@ -17,9 +16,9 @@ import {ActivityIndicator} from 'react-native-paper';
 import {getTokenData, saveToken} from '../../service/ayncStorage';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import {AuthContext} from '../../utils/context/checkToken';
-import Layout from '../../components/common/layout/Layout';
+import Navbar from '../../components/common/layout/Navbar';
 
-const Login = ({onLoginSuccess}) => {
+const Login = () => {
   const navigation = useNavigation();
   const handleBack = () => {
     navigation.navigate('Splash');
@@ -30,11 +29,12 @@ const Login = ({onLoginSuccess}) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
-  const {userData, documents, updateUserData, checkToken} =
+  const {checkToken, documents, updateUserData, userData} =
     useContext(AuthContext);
-  const [userId, setUserId] = useState();
+  const passwordRef = useRef(null);
 
   const handleLogin = async () => {
+    Keyboard.dismiss(); // Dismiss the keyboard
     // Clear error after 3 seconds
     const clearError = () => {
       setTimeout(() => {
@@ -60,7 +60,6 @@ const Login = ({onLoginSuccess}) => {
       setLoading(false); // Hide loading indicator after response
       saveToken(response.data.access_token, response.data.refresh_token);
       init();
-      setUserId(userData?.user_id);
       setDialogVisible(true);
     } catch (error) {
       setLoading(false); // Hide loading indicator
@@ -78,86 +77,80 @@ const Login = ({onLoginSuccess}) => {
       const {sub} = await getTokenData(); // Assuming sub is the user identifier
       const result = await getUser(sub);
       const data = await getDocumentsList();
-
       updateUserData(result?.user, data.data);
     } catch (error) {
-      console.error('Error fetching user data or documents:', error);
+      console.log('Error fetching user data or documents:', error.message);
     }
   };
 
   const handleCofirmation = async () => {
     try {
-      const confirmConcent = await sendConsent(userData?.user_id);
-
+      console.log(await sendConsent(userData?.user_id));
       checkToken();
     } catch (error) {
       console.log(error.message);
     }
   };
-
   return (
-    <Layout
-      _heading={{
-        heading: 'Sign In with E-Wallet',
-        handleBack,
-      }}
-      isMenu={false}>
-      <View style={{backgroundColor: '#FFFFFF', height: '100%'}}>
-        <View>
-          <CustomTextInput
-            label={'UserName'}
-            value={username}
-            onChangeText={setUsername}
-            marginBottom={25}
-          />
-          <Password
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-          />
-          {error && (
-            <View style={styles.errorContainer}>
-              <MaterialCommunityIcons
-                name="alert-circle"
-                size={20}
-                color="#8C1823"
-              />
-              <Text style={styles.errorText}>{error}</Text>
-            </View>
-          )}
-          {loading ? (
-            <ActivityIndicator animating={true} color="#3C5FDD" />
-          ) : (
-            <CustomButton
-              label="Sign In"
-              width="90%"
-              handleClick={handleLogin}
-            />
-          )}
-        </View>
-        <Text style={styles.signUpText}>Do not have an Account?</Text>
-        <Pressable
-          onPress={() => {
-            navigation.navigate('Register');
-          }}
-          style={{alignSelf: 'center'}}>
-          <Text style={styles.signUpButton}>Sign Up</Text>
-        </Pressable>
-        <ConfirmationDialog
-          dialogVisible={dialogVisible}
-          closeDialog={setDialogVisible}
-          handleConfirmation={handleCofirmation}
-          documents={documents}
+    <View style={{backgroundColor: '#FFFFFF', height: '100%'}}>
+      <Navbar isMenu={false} />
+      <HeadingText
+        {...{
+          heading: 'Sign In with E-Wallet',
+          handleBack,
+        }}
+      />
+      <View>
+        <CustomTextInput
+          label={'UserName'}
+          value={username}
+          onChangeText={setUsername}
+          marginBottom={25}
+          onSubmitEditing={() => passwordRef.current.focus()}
         />
+        <Password
+          ref={passwordRef}
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+          onSubmitEditing={handleLogin}
+        />
+        {error && (
+          <View style={styles.errorContainer}>
+            <MaterialCommunityIcons
+              name="alert-circle"
+              size={20}
+              color="#8C1823"
+            />
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
+        {loading ? (
+          <ActivityIndicator animating={true} color="#3C5FDD" />
+        ) : (
+          <CustomButton label="Sign In" width="90%" handleClick={handleLogin} />
+        )}
       </View>
-    </Layout>
+      <Text style={styles.signUpText}>Do not have an Account?</Text>
+      <Pressable
+        onPress={() => {
+          navigation.navigate('Register');
+        }}
+        style={{alignSelf: 'center'}}>
+        <Text style={styles.signUpButton}>Sign Up</Text>
+      </Pressable>
+      <ConfirmationDialog
+        dialogVisible={dialogVisible}
+        closeDialog={setDialogVisible}
+        handleConfirmation={handleCofirmation}
+        documents={documents}
+      />
+    </View>
   );
 };
 
 // Prop validation
-Login.propTypes = {
-  onLoginSuccess: PropTypes.func.isRequired,
-};
+Login.propTypes = {};
 
 const styles = StyleSheet.create({
   text: {
@@ -182,9 +175,9 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   signUpText: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Poppins-Medium',
-    color: '#4D4639',
+    color: 'black',
     textAlign: 'center',
     marginTop: 10,
   },

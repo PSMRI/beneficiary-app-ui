@@ -106,7 +106,7 @@ ConfirmationDialog.propTypes = {
   closeDialog: PropTypes.func.isRequired, // Ensure that closeDialog is a required function
 };
 const styles = StyleSheet.create({
-  container: {},
+  container: {backgroundColor: '#FFF'},
   dialogHeader: {
     height: 70,
     paddingHorizontal: 8,
