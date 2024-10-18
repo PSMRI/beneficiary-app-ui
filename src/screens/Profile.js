@@ -44,8 +44,11 @@ const Profile = () => {
       _heading={{
         benificiary: true,
         heading: `${userData?.first_name} ${userData?.last_name}`,
-        subHeading: 'Logged in with Digilocker',
-        label: `${userData?.first_name?.[0]}${userData?.last_name?.[0]}`,
+        subHeading: 'Logged in with E-Wallet',
+        label:
+          userData?.last_name?.length > 1
+            ? `${userData?.first_name?.[0]}${userData?.last_name?.[0]}`
+            : userData?.first_name?.[0],
       }}>
       {/* Scrollable part of the screen */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -54,6 +57,7 @@ const Profile = () => {
           testId={'click-explore-scholarship'}
           label="Explore Benefits"
           marginTop={18}
+          marginBottom={25}
           height={40}
           width={'95%'}
           handleClick={handleOnPress}

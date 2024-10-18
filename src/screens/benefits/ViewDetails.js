@@ -139,8 +139,7 @@ const ViewDetails = ({route}) => {
   return (
     <Layout
       _heading={{
-        heading: 'Pre-Matric Scholarship-ST',
-        subHeading: 'Application for SC Scholarship1',
+        heading: `${item?.descriptor?.name}`,
         handleBack,
       }}>
       <ScrollView contentContainerStyle={styles.container}>

@@ -26,7 +26,11 @@ const ApplicationList = ({applicationList}) => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <List.Section>
         <View style={styles.sectionContainer}>
-          <View style={styles.headerContainer}>
+          <View
+            style={[
+              styles.headerContainer,
+              {borderBottomWidth: applicationList?.length > 0 ? 1 : 0},
+            ]}>
             <IconButton
               icon={'check-circle'}
               size={20}
@@ -35,20 +39,20 @@ const ApplicationList = ({applicationList}) => {
             />
             <Text style={styles.subheaderText}>Submitted</Text>
           </View>
-          <View style={styles.divider} />
-          {applicationList?.map(app => (
-            <List.Item
-              key={app.benefit_id}
-              title={app.application_name}
-              titleStyle={{fontFamily: 'Poppins-Regular', fontSize: 14}}
-              style={styles.listItem}
-              onPress={() => {
-                navigation.navigate('MyApplication', {
-                  id: app?.internal_application_id,
-                });
-              }}
-            />
-          ))}
+          {applicationList?.length > 0 &&
+            applicationList?.map(app => (
+              <List.Item
+                key={app.benefit_id}
+                title={app.application_name}
+                titleStyle={{fontFamily: 'Poppins-Regular', fontSize: 14}}
+                style={styles.listItem}
+                onPress={() => {
+                  navigation.navigate('MyApplication', {
+                    id: app?.internal_application_id,
+                  });
+                }}
+              />
+            ))}
         </View>
       </List.Section>
     </ScrollView>
@@ -73,6 +77,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginBottom: 10,
+    borderBottomColor: '#DDDDDD',
+    padding: 10,
   },
   icon: {
     marginRight: 8,
