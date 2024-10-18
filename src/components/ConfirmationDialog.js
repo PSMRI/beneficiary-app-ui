@@ -1,6 +1,13 @@
 import * as React from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {Dialog, Portal, Text, IconButton, List} from 'react-native-paper';
+import {
+  Dialog,
+  Portal,
+  Text,
+  IconButton,
+  List,
+  ActivityIndicator,
+} from 'react-native-paper';
 import SubmitDialog from './SubmitDialog';
 import CustomButton from './common/button/Button';
 import PropTypes from 'prop-types';
@@ -20,6 +27,7 @@ const ConfirmationDialog = ({
   closeDialog,
   handleConfirmation,
   documents,
+  loading,
 }) => {
   // Function to call the parent's function
   const sendCloseDialog = () => {
@@ -33,6 +41,7 @@ const ConfirmationDialog = ({
   const closeSubmitDialog = () => {
     closeDialog(false);
   };
+
   return (
     <View>
       {/* Child component contains the FlatList */}
@@ -67,33 +76,48 @@ const ConfirmationDialog = ({
                 application.
               </Text>
               <ScrollView style={{height: 220}}>
-                {documents?.map(document => (
-                  <List.Item
-                    key={document.name}
-                    title={document.name}
-                    style={styles.listItem} // Apply styles here for the List.Item container
-                    titleStyle={styles.titleStyle} // Custom font style for the title
-                    left={props => LeftIcon(props)}
-                  />
-                ))}
+                {loading ? (
+                  <ActivityIndicator animating={true} color="#3C5FDD" />
+                ) : (
+                  documents?.map(document => (
+                    <List.Item
+                      key={document.name}
+                      title={document.name}
+                      style={styles.listItem} // Apply styles here for the List.Item container
+                      titleStyle={styles.titleStyle} // Custom font style for the title
+                      left={props => LeftIcon(props)}
+                    />
+                  ))
+                )}
               </ScrollView>
             </Dialog.Content>
 
             <Dialog.Actions style={styles.dialogAction}>
-              <CustomButton
-                label={'Deny'}
-                width={135}
-                height={45}
-                handleClick={sendCloseDialog}
-                mode="outlined"
-              />
-              <View></View>
-              <CustomButton
-                label={'Accept'}
-                width={135}
-                height={45}
-                handleClick={openSubmitDialog}
-              />
+              {loading ? (
+                <ActivityIndicator animating={true} color="#3C5FDD" />
+              ) : (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 10,
+                  }}>
+                  <CustomButton
+                    label={'Deny'}
+                    width={135}
+                    height={45}
+                    handleClick={sendCloseDialog}
+                    mode="outlined"
+                  />
+                  <CustomButton
+                    label={'Accept'}
+                    width={135}
+                    height={45}
+                    handleClick={openSubmitDialog}
+                  />
+                </View>
+              )}
             </Dialog.Actions>
           </Dialog>
         </Portal>

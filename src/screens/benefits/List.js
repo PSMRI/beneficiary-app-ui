@@ -32,7 +32,7 @@ const List = () => {
       };
       const newFilter = {};
       Object.keys(filters).forEach(key => {
-        if (filters[key]) {
+        if (filters[key] && filters[key] !== '') {
           if (typeof filters[key] === 'string') {
             newFilter[key] = filters[key].toLowerCase();
           } else {
@@ -49,8 +49,19 @@ const List = () => {
     const init = async () => {
       setLoading(true);
       const result = await benefitServis.getAll({
-        filters: {...filter, 'ann-hh-inc': `0-${filter?.['ann-hh-inc']}`},
+        filters: {
+          ...filter,
+          'ann-hh-inc': filter?.['ann-hh-inc']
+            ? `0-${filter?.['ann-hh-inc']}`
+            : '',
+        },
         search,
+      });
+      console.log({
+        ...filter,
+        'ann-hh-inc': filter?.['ann-hh-inc']
+          ? `0-${filter?.['ann-hh-inc']}`
+          : '',
       });
       setBenefits(result?.data?.ubi_network_cache || []);
 

@@ -29,7 +29,6 @@ const MyApplication = ({route}) => {
     try {
       const result = await getApplicationDetails(id);
       setUserData(result?.application_data);
-      console.log('application details', result?.application_data);
       setBenefit_name(result?.external_application_id);
     } catch (error) {
       console.error('Error fetching application details:', error);

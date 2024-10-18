@@ -32,7 +32,7 @@ const DropdownComponent = ({
 
   React.useEffect(() => {
     const found = Data.find(item => item.value === value);
-    if (!found) {
+    if (!found && value !== '') {
       const foundOther = Data.find(item => item.value === 'other');
       if (foundOther) {
         setLocalValue('other');
@@ -49,7 +49,6 @@ const DropdownComponent = ({
     () =>
       StyleSheet.create({
         container: {
-          backgroundColor: '#FFFFFF',
           padding,
         },
         dropdown: {

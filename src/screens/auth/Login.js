@@ -74,23 +74,27 @@ const Login = () => {
 
   const init = async () => {
     try {
+      setLoading(true);
       const {sub} = await getTokenData(); // Assuming sub is the user identifier
       const result = await getUser(sub);
       const data = await getDocumentsList();
       updateUserData(result?.user, data.data);
+      setLoading(false);
     } catch (error) {
       console.log('Error fetching user data or documents:', error.message);
+      setLoading(false);
     }
   };
 
   const handleCofirmation = async () => {
     try {
-      console.log(await sendConsent(userData?.user_id));
+      await sendConsent(userData?.user_id);
       checkToken();
     } catch (error) {
       console.log(error.message);
     }
   };
+
   return (
     <View style={{backgroundColor: '#FFFFFF', height: '100%'}}>
       <Navbar isMenu={false} />
@@ -140,6 +144,7 @@ const Login = () => {
         <Text style={styles.signUpButton}>Sign Up</Text>
       </Pressable>
       <ConfirmationDialog
+        loading={loading}
         dialogVisible={dialogVisible}
         closeDialog={setDialogVisible}
         handleConfirmation={handleCofirmation}
