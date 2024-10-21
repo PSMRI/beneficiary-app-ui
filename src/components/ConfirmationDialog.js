@@ -28,6 +28,7 @@ const ConfirmationDialog = ({
   handleConfirmation,
   documents,
   loading,
+  concentText = 'Share my documents with the provider for processing my application',
 }) => {
   // Function to call the parent's function
   const sendCloseDialog = () => {
@@ -72,8 +73,7 @@ const ConfirmationDialog = ({
 
             <Dialog.Content style={styles.dialogContent}>
               <Text variant="bodyMedium" style={styles.conformationText}>
-                Share my documents with the provider for processing my
-                application.
+                {concentText}
               </Text>
               <ScrollView style={{height: 220}}>
                 {loading ? (

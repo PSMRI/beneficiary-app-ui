@@ -4,9 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import SearchHeader from '../../components/common/layout/SearchHeader';
 import Layout from '../../components/common/layout/Layout';
 import * as benefitServis from '../../service/benefits';
-
 import {Gender, Castes, IncomeRange} from '../../constatnt/Constant';
-
 import BenefitCard from '../../components/common/BenefitCard';
 import {Text} from 'react-native-paper';
 import {getTokenData} from '../../service/ayncStorage';
@@ -17,6 +15,7 @@ const List = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState({});
+  const [initState, setInitState] = useState('yes');
   // const [hasMore] = useState(true);
   // const benefits = data.ubi_network_cache; // data from API
   const [benefits, setBenefits] = useState([]);
@@ -41,34 +40,32 @@ const List = () => {
         }
       });
       setFilter(newFilter);
+      setInitState('no');
     };
     init();
   }, []);
-
+  console.log(loading, initState);
   useEffect(() => {
     const init = async () => {
-      setLoading(true);
-      const result = await benefitServis.getAll({
-        filters: {
-          ...filter,
-          'ann-hh-inc': filter?.['ann-hh-inc']
-            ? `0-${filter?.['ann-hh-inc']}`
-            : '',
-        },
-        search,
-      });
-      console.log({
-        ...filter,
-        'ann-hh-inc': filter?.['ann-hh-inc']
-          ? `0-${filter?.['ann-hh-inc']}`
-          : '',
-      });
-      setBenefits(result?.data?.ubi_network_cache || []);
-
-      setLoading(false);
+      if (initState == 'no') {
+        setLoading(true);
+        console.log('hello2');
+        const result = await benefitServis.getAll({
+          filters: {
+            ...filter,
+            'ann-hh-inc': filter?.['ann-hh-inc']
+              ? `0-${filter?.['ann-hh-inc']}`
+              : '',
+          },
+          search,
+        });
+        console.log(result, 'result');
+        setBenefits(result?.data?.ubi_network_cache || []);
+        setLoading(false);
+      }
     };
     init();
-  }, [filter, search]);
+  }, [filter, search, initState]);
 
   return (
     <Layout
@@ -82,7 +79,7 @@ const List = () => {
           onSearch={setSearch}
           inputs={[
             {
-              label: 'Cast',
+              label: 'Caste',
               data: Castes,
               value: filter?.['social-eligibility'] || '',
               key: 'social-eligibility',

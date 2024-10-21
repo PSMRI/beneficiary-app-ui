@@ -11,6 +11,7 @@ const TextInputWithLabel = ({label, isDisabled = true, value}) => {
           style={[styles.input]}
           value={value === null || value === undefined ? '--' : value}
           editable={false}
+          multiline={true}
           placeholder={label}
         />
         {/* <Icon
@@ -19,7 +20,10 @@ const TextInputWithLabel = ({label, isDisabled = true, value}) => {
           color="#0B7B69"
           style={styles.applicationIcon}
         /> */}
-        {value === undefined || value === ' ' ? null : (
+        {value === undefined ||
+        value === '' ||
+        value === null ||
+        value === ' ' ? null : (
           <View>
             <MaterialCommunityIcons name="check" color="#0B7B69" size={24} />
           </View>

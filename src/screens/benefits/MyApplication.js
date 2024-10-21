@@ -10,7 +10,7 @@ const myApplicationData = [
   {id: 3, label: 'Gender', value: 'gender'},
   {id: 4, label: 'Age', value: 'age'},
   {id: 5, label: 'Samagra Id', value: 'samagra_id'},
-  {id: 6, label: 'Class', value: 'class'},
+  {id: 6, label: 'Class', value: 'current_class'},
   {id: 7, label: 'Adhaar Card', value: 'aadhar'},
   {id: 8, label: 'Marks', value: 'previous_year_marks'},
   {id: 9, label: 'Caste', value: 'caste'},
@@ -28,7 +28,11 @@ const MyApplication = ({route}) => {
   const init = async () => {
     try {
       const result = await getApplicationDetails(id);
-      setUserData(result?.application_data);
+      setUserData({
+        ...(result?.application_data || {}),
+        ...(result?.application_data?.user || {}),
+        ...(result?.application_data?.userInfo || {}),
+      });
       setBenefit_name(result?.external_application_id);
     } catch (error) {
       console.error('Error fetching application details:', error);

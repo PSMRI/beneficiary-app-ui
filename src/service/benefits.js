@@ -1,17 +1,19 @@
 import axios from 'axios';
 import {API_BASE_URL} from './env.dev';
 import {generateUUID} from '../utils/JsHelper/helper';
-
+import {getToken} from './ayncStorage';
 //dev-uba-bap.tekdinext.com/api/content/search
 
 export const getAll = async userData => {
   try {
+    const {token} = await getToken();
     const response = await axios.post(
       `${API_BASE_URL}/content/search`,
       userData,
       {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -54,9 +56,11 @@ export const getOne = async ({id}) => {
     },
   };
   try {
+    const {token} = await getToken();
     const response = await axios.post(`${API_BASE_URL}/select`, loginData, {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     return response || {};
@@ -82,9 +86,11 @@ export const applyApplication = async ({id, context}) => {
     },
   };
   try {
+    const {token} = await getToken();
     const response = await axios.post(`${API_BASE_URL}/init`, loginData, {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     return response || {};
@@ -155,9 +161,11 @@ export const confirmApplication = async ({submission_id, context}) => {
     },
   };
   try {
+    const {token} = await getToken();
     const response = await axios.post(`${API_BASE_URL}/confirm`, data, {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     return response || {};
@@ -168,12 +176,14 @@ export const confirmApplication = async ({submission_id, context}) => {
 
 export const createApplication = async data => {
   try {
+    const {token} = await getToken();
     const response = await axios.post(
       `${API_BASE_URL}/users/user_application`,
       data,
       {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -185,6 +195,7 @@ export const createApplication = async data => {
 
 export const getApplication = async filters => {
   try {
+    const {token} = await getToken();
     const response = await axios.post(
       `${API_BASE_URL}/users/user_applications_list`,
       {
@@ -194,6 +205,7 @@ export const getApplication = async filters => {
         headers: {
           accept: 'application/json',
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
       },
     );

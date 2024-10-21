@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {removeToken} from './ayncStorage';
 import {API_BASE_URL} from './env.dev';
-
+import {getToken} from './ayncStorage';
 export const registerUser = async userData => {
   try {
     const response = await axios.post(
@@ -51,7 +51,6 @@ export const logoutUser = async (accessToken, refreshToken) => {
     );
 
     await removeToken();
-
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error('Network Error');
@@ -60,23 +59,32 @@ export const logoutUser = async (accessToken, refreshToken) => {
 
 export const getUser = async userId => {
   try {
+    // Destructure and retrieve the token from getToken()
+    const {token} = await getToken();
+    // Make the API call to fetch user data
     const response = await axios.get(
       `${API_BASE_URL}/users/get_one/${userId}?decryptData=true`,
       {
         headers: {
-          Accept: '*/*',
+          Accept: 'application/json', // 'application/json' is more specific and commonly used for APIs
+          Authorization: `Bearer ${token}`,
         },
       },
     );
 
-    // Return the user data
+    // Return the user data from the response
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch user:', error.message, userId);
-    throw error; // Optionally re-throw the error for further handling
+    // Log more comprehensive error information
+    console.error(`Failed to fetch user with ID ${userId}:`, error.message);
+
+    // Re-throw the error for further handling if needed
+    throw error;
   }
 };
+
 export const sendConsent = async user_id => {
+  const {token} = await getToken();
   const data = {
     user_id: user_id,
     purpose: 'Confirmation to access documents',
@@ -87,6 +95,7 @@ export const sendConsent = async user_id => {
   const headers = {
     Accept: '*/*',
     'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
   };
 
   try {
@@ -100,9 +109,11 @@ export const sendConsent = async user_id => {
 };
 export const getDocumentsList = async () => {
   try {
+    const {token} = await getToken();
     const response = await axios.get(`${API_BASE_URL}/content/documents_list`, {
       headers: {
         Accept: '*/*',
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -131,12 +142,14 @@ export const getApplicationList = async (searchText, user_id) => {
           };
 
     // Send the dynamically created requestBody in the axios post request
+    const {token} = await getToken();
     const response = await axios.post(
       `${API_BASE_URL}/users/user_applications_list`,
       requestBody, // Use the dynamically created requestBody
       {
         headers: {
           Accept: '*/*',
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -149,11 +162,13 @@ export const getApplicationList = async (searchText, user_id) => {
 };
 export const getApplicationDetails = async applicationId => {
   try {
+    const {token} = await getToken();
     const response = await axios.get(
       `${API_BASE_URL}/users/user_application/${applicationId}`,
       {
         headers: {
           Accept: '*/*',
+          Authorization: `Bearer ${token}`,
         },
       },
     );

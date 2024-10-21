@@ -113,14 +113,21 @@ const Register = () => {
             />
           )}
         </View>
-        <Text style={styles.signUpText}>Already Have An Account?</Text>
-        <Pressable
-          onPress={() => {
-            navigation.navigate('Login');
-          }}
-          style={{alignSelf: 'center'}}>
-          <Text style={styles.signUpButton}>Sign In</Text>
-        </Pressable>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 10,
+          }}>
+          <Text style={styles.signUpText}>Already Have An Account? </Text>
+          <Pressable
+            onPress={() => {
+              navigation.navigate('Login');
+            }}>
+            <Text style={styles.signUpButton}>Sign In</Text>
+          </Pressable>
+        </View>
       </View>
     </Layout>
   );
@@ -153,12 +160,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: '#4D4639',
     textAlign: 'center',
-    marginTop: 10,
   },
   signUpButton: {
-    fontSize: 12,
+    fontSize: 16,
     fontFamily: 'Poppins-Medium',
     color: '#3C5FDD',
+    marginTop: 0,
+    textDecorationLine: 'underline',
   },
 });
 

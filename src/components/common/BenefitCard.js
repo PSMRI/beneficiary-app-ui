@@ -35,13 +35,16 @@ const BenefitCard = ({item, navigation}) => {
           <Text style={{fontSize: 12, marginLeft: 12}}>
             {item?.item?.price?.value}
           </Text>
+          <Text style={{fontSize: 12, marginLeft: 5}}>
+            {item?.item?.price?.currency}
+          </Text>
         </View>
         {/* Simple Chip */}
         <View style={styles.chipContainer}>
           {eligibility?.map(val => {
             return (
               <Text key={val} style={styles.chipColor}>
-                {val}
+                {val.toUpperCase()}
               </Text>
             );
           })}
