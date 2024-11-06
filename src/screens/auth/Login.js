@@ -43,7 +43,7 @@ const Login = () => {
     };
 
     if (!username) {
-      setError('Enter Username ');
+      setError('Enter Username');
       clearError();
       return;
     }
@@ -106,7 +106,7 @@ const Login = () => {
       />
       <View>
         <CustomTextInput
-          label={'UserName'}
+          label={'User Name'}
           value={username}
           onChangeText={setUsername}
           marginBottom={25}
@@ -156,7 +156,7 @@ const Login = () => {
         closeDialog={setDialogVisible}
         handleConfirmation={handleCofirmation}
         documents={documents}
-        concentText="Please provide your consent to share the following with Fast Pass"
+        consentText="Please provide your consent to share the following with Fast Pass"
       />
     </View>
   );

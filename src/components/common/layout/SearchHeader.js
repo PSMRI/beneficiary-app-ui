@@ -3,10 +3,14 @@ import React from 'react';
 import FilterDialog from '../../FilterDialog';
 import Searchbar from '../inputs/Searchbar';
 
-const SearchHeader = ({onSearch, inputs, onFilter}) => {
+const SearchHeader = ({onSearch, searchValue, inputs, onFilter}) => {
   return (
     <View style={styles.view}>
-      <Searchbar style={styles.searchBar} onSearch={onSearch} />
+      <Searchbar
+        style={styles.searchBar}
+        onSearch={onSearch}
+        value={searchValue}
+      />
       <FilterDialog style={styles.filter} inputs={inputs} onFilter={onFilter} />
     </View>
   );
