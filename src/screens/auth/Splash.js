@@ -33,7 +33,7 @@ const Splash = () => {
           getValue={setSelectedLanguage}
         />
         <Button
-          label="Sign In / Sign Up "
+          label="Sign In / Sign Up With Your E-Wallet"
           padding={2}
           width="92%"
           handleClick={handleLogin}

@@ -24,7 +24,7 @@ const BenefitCard = ({item, navigation}) => {
           {item?.title}
         </Text>
         <Text numberOfLines={2} style={styles.subTitle}>
-          {item?.description}
+          {item?.provider_name}
         </Text>
         {/* <Text numberOfLines={2} style={styles.benefitAmount}>
         <Icon source={'currency-inr'} size={16} />

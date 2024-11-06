@@ -4,7 +4,7 @@ import CustomButton from '../../components/common/button/Button';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import Layout from '../../components/common/layout/Layout';
 import {useNavigation} from '@react-navigation/native';
-import {ActivityIndicator, Icon} from 'react-native-paper';
+import {ActivityIndicator, Dialog, Icon, Portal} from 'react-native-paper';
 import * as benefitServis from '../../service/benefits';
 import WebViewFormExample from '../../components/common/webview/Form';
 import {getTokenData} from '../../service/ayncStorage';
@@ -21,6 +21,7 @@ const ViewDetails = ({route}) => {
   const navigation = useNavigation();
   const [context, setContext] = useState({});
   const [isApplied, setIsApplied] = useState(false);
+  const [error, setError] = useState();
   const handleBack = () => {
     navigation.navigate('BenefitsListing');
   };
@@ -70,7 +71,7 @@ const ViewDetails = ({route}) => {
         }
         setLoading(false);
       } catch (e) {
-        console.log('Error:', e.message);
+        setError('Error:', e.message);
       }
     };
     init();
@@ -89,32 +90,40 @@ const ViewDetails = ({route}) => {
   ];
   const submitConfirm = async submission_id => {
     setLoading(true);
-    const result = await benefitServis.confirmApplication({
-      submission_id,
-      context,
-    });
-    const orderId = result?.data?.responses?.[0]?.message?.order?.id;
-    if (orderId) {
-      const payload = {
-        user_id: authUser?.user_id,
-        benefit_id: id,
-        benefit_provider_id: context?.bpp_id,
-        benefit_provider_uri: context?.bap_uri,
-        external_application_id: orderId,
-        application_name: item?.descriptor?.name,
-        status: 'submitted',
-        application_data: authUser,
-      };
-      try {
+
+    try {
+      const result = await benefitServis.confirmApplication({
+        submission_id,
+        item_id: id,
+        context,
+      });
+      const orderId = result?.data?.responses?.[0]?.message?.order?.id;
+      if (orderId) {
+        const payload = {
+          user_id: authUser?.user_id,
+          benefit_id: id,
+          benefit_provider_id: context?.bpp_id,
+          benefit_provider_uri: context?.bap_uri,
+          external_application_id: orderId,
+          application_name: item?.descriptor?.name,
+          status: 'submitted',
+          application_data: authUser,
+        };
         const appResult = await benefitServis.createApplication(payload);
         if (appResult) {
           setWebFromProp();
           setVisibleDialog({orderId, name: item?.descriptor?.name});
           setLoading(false);
         }
-      } catch (e) {
-        console.log(e.message);
+      } else {
+        setError(
+          'Error while creating application. Please try again later. (Status code 500)',
+        );
+        setLoading(false);
       }
+    } catch (e) {
+      setError('Error:', e.message);
+      setLoading(false);
     }
     setLoading(false);
   };
@@ -131,6 +140,23 @@ const ViewDetails = ({route}) => {
       </View>
     );
   }
+
+  if (error) {
+    return (
+      <Portal>
+        <Dialog visible={!!error} onDismiss={() => setError('')}>
+          <Dialog.Title>Error</Dialog.Title>
+          <Dialog.Content>
+            <Text>{error}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Text onPress={() => setError('')}>Close</Text>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    );
+  }
+
   if (webFromProp?.url) {
     return (
       <WebViewFormExample {...webFromProp} setPageContent={submitConfirm} />
@@ -144,7 +170,7 @@ const ViewDetails = ({route}) => {
       }}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.sidePadding}>
-          <Text style={styles.title}>{item?.descriptor?.name}</Text>
+          <Text style={styles.title}>{'Benefit'}</Text>
           <View style={styles.benefitAmount}>
             <Icon source={'currency-inr'} size={16} color="#484848" />
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -196,6 +222,7 @@ const ViewDetails = ({route}) => {
                 scrollEnabled={false}
               />
               <CustomButton
+                marginTop={40}
                 label={
                   isApplied
                     ? 'Application Already Submitted'
@@ -204,7 +231,8 @@ const ViewDetails = ({route}) => {
                 disabled={isApplied}
                 width="100%"
                 mode="contained"
-                handleClick={() => setVisibleDialog(true)}
+                // handleClick={() => setVisibleDialog(true)}
+                handleClick={openCOnfirmDialog}
               />
               <ConfirmationDialog
                 dialogVisible={visibleDialog}

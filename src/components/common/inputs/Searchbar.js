@@ -1,10 +1,13 @@
 import * as React from 'react';
 import {StyleSheet, View, TextInput} from 'react-native';
 import {IconButton} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the icon library
 
-const Searchbar = ({onSearch}) => {
+const Searchbar = ({onSearch, value}) => {
   const [searchQuery, setSearchQuery] = React.useState('');
+
+  React.useEffect(() => {
+    setSearchQuery(value);
+  }, [value]);
 
   return (
     <View style={styles.Searchcontainer}>
